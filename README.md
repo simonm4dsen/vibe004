@@ -54,6 +54,22 @@ npm run dev                  # http://localhost:3000
 Then: create an account → create a group → share the group name and password with the
 others → everyone adds their appointments.
 
+### Testing from other devices on your network
+
+```bash
+npm run dev -- -H 0.0.0.0
+```
+
+Others on the same network can then reach it at `http://<your-lan-ip>:3000` (find it with
+`ipconfig` on Windows or `ipconfig getifaddr en0` on macOS). Windows may prompt to allow
+Node through the firewall the first time.
+
+Use `npm run dev` rather than `npm run build && npm start` for this. The session cookie is
+marked `Secure` in production, and browsers discard `Secure` cookies sent over plain
+`http://`, so sign-in silently fails on a LAN address. `localhost` is exempt, which is why
+a production build still works on your own machine. On Vercel everything is served over
+HTTPS, so this only affects local network testing.
+
 ### Running against a local Postgres instead of Neon
 
 Any non-Neon `DATABASE_URL` automatically uses the `node-postgres` driver, so you can
