@@ -11,7 +11,7 @@ import {
   hashPassword,
   verifyPassword,
 } from "@/lib/auth";
-import { errorState, type ActionState } from "@/lib/action-state";
+import { errorState, guardAction, type ActionState } from "@/lib/action-state";
 import { firstError, loginSchema, registerSchema } from "@/lib/validation";
 
 export async function registerAction(
@@ -30,23 +30,25 @@ export async function registerAction(
 
   const { email, password } = parsed.data;
 
-  const [existing] = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  return guardAction(async () => {
+    const [existing] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
-  if (existing) {
-    return errorState("An account with that email already exists");
-  }
+    if (existing) {
+      return errorState("An account with that email already exists");
+    }
 
-  const [created] = await db
-    .insert(users)
-    .values({ email, passwordHash: await hashPassword(password) })
-    .returning({ id: users.id });
+    const [created] = await db
+      .insert(users)
+      .values({ email, passwordHash: await hashPassword(password) })
+      .returning({ id: users.id });
 
-  await createSession(created.id);
-  redirect("/groups");
+    await createSession(created.id);
+    redirect("/groups");
+  });
 }
 
 export async function loginAction(
@@ -62,18 +64,23 @@ export async function loginAction(
     return errorState(firstError(parsed.error));
   }
 
-  const [user] = await db
-    .select({ id: users.id, passwordHash: users.passwordHash })
-    .from(users)
-    .where(eq(users.email, parsed.data.email))
-    .limit(1);
+  return guardAction(async () => {
+    const [user] = await db
+      .select({ id: users.id, passwordHash: users.passwordHash })
+      .from(users)
+      .where(eq(users.email, parsed.data.email))
+      .limit(1);
 
-  if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
-    return errorState("Incorrect email or password");
-  }
+    if (
+      !user ||
+      !(await verifyPassword(parsed.data.password, user.passwordHash))
+    ) {
+      return errorState("Incorrect email or password");
+    }
 
-  await createSession(user.id);
-  redirect("/groups");
+    await createSession(user.id);
+    redirect("/groups");
+  });
 }
 
 export async function signOutAction(): Promise<void> {

@@ -115,6 +115,38 @@ npm run db:migrate
 Migrations are intentionally **not** run at request time or during `next build`;
 run `npm run db:migrate` whenever `drizzle/` gains a new migration.
 
+## Troubleshooting a deployment
+
+If a deployed site shows *"Application error: a server-side exception has occurred"*,
+open **`/api/health`** on that deployment. It checks the things that actually break a
+fresh deploy and names the culprit, without exposing any secret values:
+
+```json
+{
+  "ok": true,
+  "checks": {
+    "authSecret": { "ok": true, "detail": "set" },
+    "databaseUrl": { "ok": true, "detail": "host ep-xxx.neon.tech, database neondb, driver neon-http" },
+    "database":    { "ok": true, "detail": "reachable" },
+    "schema":      { "ok": true, "detail": "all 4 tables present" }
+  }
+}
+```
+
+It returns HTTP 503 when something is wrong. Common causes:
+
+| Symptom in `/api/health` | Fix |
+| --- | --- |
+| `databaseUrl: missing` | Add `DATABASE_URL` in Vercel → Settings → Environment Variables, then **redeploy** — env changes only apply to new deployments. |
+| `schema: missing table(s)` | The app is pointed at a database that was never migrated (common when the Vercel/Neon integration provisions a fresh one). Run `npm run db:migrate` with `DATABASE_URL_UNPOOLED` set to *that* database. |
+| `database: password authentication failed` | The connection string is stale — copy a fresh one from the Neon dashboard. |
+| `authSecret: missing` | Add `AUTH_SECRET`. Changing it invalidates existing sign-ins. |
+
+Environment variables are read defensively: surrounding quotes and stray whitespace are
+stripped, and `POSTGRES_URL` / `POSTGRES_PRISMA_URL` / `POSTGRES_URL_NON_POOLING` are
+accepted as fallbacks for `DATABASE_URL` so the Vercel Postgres and Neon integrations
+work without renaming anything.
+
 ## Data model
 
 ```
