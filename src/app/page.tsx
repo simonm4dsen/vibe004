@@ -10,11 +10,11 @@ const features = [
   },
   {
     title: "Everyone joins",
-    body: "Friends join with the group name and password, then choose their display name.",
+    body: "Friends enter that name and password, then choose their own display name.",
   },
   {
     title: "See the weeks ahead",
-    body: "One list of upcoming plans plus a week and month calendar per member.",
+    body: "Everyone adds their plans and you get one shared view of what's coming up.",
   },
 ];
 
@@ -35,7 +35,7 @@ export default async function HomePage() {
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <Link href="/register" className="btn-primary">
-            Get started
+            Create account
           </Link>
           <Link href="/login" className="btn-secondary">
             Sign in
@@ -43,13 +43,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        {features.map((feature) => (
-          <div key={feature.title} className="card">
-            <h2 className="mb-1 font-medium">{feature.title}</h2>
-            <p className="muted">{feature.body}</p>
-          </div>
-        ))}
+      <section>
+        <ol className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+          {features.map((feature, index) => (
+            <li key={feature.title} className="relative flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-sky-500 text-sm font-semibold text-white shadow-md shadow-indigo-600/30">
+                  {index + 1}
+                </span>
+                <h2 className="font-medium">{feature.title}</h2>
+              </div>
+              <p className="muted">{feature.body}</p>
+              {index < features.length - 1 ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute top-4 right-[-1.25rem] hidden text-neutral-300 sm:block dark:text-neutral-700"
+                >
+                  →
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ol>
       </section>
     </div>
   );

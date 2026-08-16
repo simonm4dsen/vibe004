@@ -112,7 +112,7 @@ export function AppointmentForm({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <label className="label" htmlFor="startsAt">
             Starts
           </label>
@@ -121,12 +121,12 @@ export function AppointmentForm({
             name="startsAt"
             type="datetime-local"
             required
-            className="input"
+            className="input w-full min-w-0"
             value={startsAt}
             onChange={(event) => handleStartChange(event.target.value)}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="label" htmlFor="endsAt">
             Ends
           </label>
@@ -135,7 +135,7 @@ export function AppointmentForm({
             name="endsAt"
             type="datetime-local"
             required
-            className="input"
+            className="input w-full min-w-0"
             value={endsAt}
             onChange={(event) => setEndsAt(event.target.value)}
           />
