@@ -2,28 +2,32 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 import { drizzle as drizzleNodePostgres } from "drizzle-orm/node-postgres";
 
+import { DATABASE_URL_KEYS, describeDatabaseUrl, getDatabaseUrl } from "@/lib/env";
 import * as schema from "./schema";
 
 type Database = NeonHttpDatabase<typeof schema>;
 
 let instance: Database | null = null;
 
-function isNeonUrl(url: string): boolean {
-  return url.includes(".neon.tech");
-}
-
 function getDb(): Database {
   if (instance) return instance;
 
-  const connectionString = process.env.DATABASE_URL;
+  const connectionString = getDatabaseUrl();
 
   if (!connectionString) {
     throw new Error(
-      "DATABASE_URL is not set. Copy .env.example to .env.local and add your Neon connection string.",
+      `No database connection string found. Set DATABASE_URL (checked: ${DATABASE_URL_KEYS.join(", ")}). ` +
+        "On Vercel, add it under Project Settings → Environment Variables and redeploy so the new value is picked up.",
     );
   }
 
-  if (isNeonUrl(connectionString)) {
+  const described = describeDatabaseUrl(connectionString);
+
+  if (!described.valid) {
+    throw new Error(`DATABASE_URL is not usable: ${described.reason}`);
+  }
+
+  if (described.driver === "neon-http") {
     instance = drizzle(neon(connectionString), { schema });
   } else {
     // Any other Postgres (e.g. a local Docker instance for development) goes

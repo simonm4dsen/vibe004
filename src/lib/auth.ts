@@ -6,16 +6,17 @@ import bcrypt from "bcryptjs";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { getAuthSecret } from "@/lib/env";
 
 const SESSION_COOKIE = "sgc_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 function getSecret(): Uint8Array {
-  const secret = process.env.AUTH_SECRET;
+  const secret = getAuthSecret();
 
   if (!secret || secret.length < 16) {
     throw new Error(
-      "AUTH_SECRET is missing or too short. Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('base64'))\"",
+      "AUTH_SECRET is missing or shorter than 16 characters. Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('base64'))\"",
     );
   }
 
@@ -66,12 +67,17 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
 
   if (!token) return null;
 
+  // Deliberately outside the try/catch: a missing AUTH_SECRET is a deployment
+  // problem and should surface loudly, not masquerade as "signed out".
+  const secret = getSecret();
+
   let userId: string;
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, secret);
     if (typeof payload.sub !== "string") return null;
     userId = payload.sub;
   } catch {
+    // Expired, tampered with, or signed with a previous AUTH_SECRET.
     return null;
   }
 
