@@ -196,6 +196,66 @@ export function CalendarView({
   );
 }
 
+function WeekAgenda({
+  weekStart,
+  memberIds,
+  index,
+  today,
+}: {
+  weekStart: Date;
+  memberIds: string[];
+  index: Map<string, AppointmentDTO[]>;
+  today: Date;
+}) {
+  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+
+  return (
+    <div className="space-y-2 md:hidden">
+      {days.map((day) => {
+        const items = index.get(dayKey(day)) ?? [];
+        return (
+          <div
+            key={dayKey(day)}
+            className={`rounded-lg border p-3 ${
+              isSameDay(day, today)
+                ? "border-indigo-400/50 bg-indigo-500/5"
+                : "border-black/10 dark:border-white/10"
+            }`}
+          >
+            <div className="mb-2 flex items-baseline justify-between">
+              <span
+                className={`text-sm font-semibold ${
+                  isSameDay(day, today) ? "text-indigo-600 dark:text-indigo-400" : ""
+                }`}
+              >
+                {day.toLocaleDateString(undefined, { weekday: "long" })}
+              </span>
+              <span className="muted">
+                {day.toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+              </span>
+            </div>
+            {items.length === 0 ? (
+              <p className="muted text-xs">No appointments</p>
+            ) : (
+              <div className="space-y-1">
+                {items.map((appointment) => (
+                  <Chip
+                    key={`${appointment.id}-${dayKey(day)}`}
+                    appointment={appointment}
+                    day={day}
+                    memberIds={memberIds}
+                    withMember
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function WeekGrid({
   weekStart,
   members,
@@ -212,73 +272,81 @@ function WeekGrid({
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] table-fixed border-collapse">
-        <thead>
-          <tr>
-            <th className="w-32 border-b border-black/10 p-2 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:border-white/10">
-              Member
-            </th>
-            {days.map((day) => (
-              <th
-                key={dayKey(day)}
-                className={`border-b border-black/10 p-2 text-center text-xs font-semibold dark:border-white/10 ${
-                  isSameDay(day, today) ? "text-indigo-600 dark:text-indigo-400" : ""
-                }`}
-              >
-                <span className="block uppercase tracking-wide text-neutral-500">
-                  {day.toLocaleDateString(undefined, { weekday: "short" })}
-                </span>
-                <span className="text-base">{day.getDate()}</span>
+    <>
+      <WeekAgenda
+        weekStart={weekStart}
+        memberIds={memberIds}
+        index={index}
+        today={today}
+      />
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[720px] table-fixed border-collapse">
+          <thead>
+            <tr>
+              <th className="w-32 border-b border-black/10 p-2 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:border-white/10">
+                Member
               </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member) => (
-            <tr key={member.id} className="align-top">
-              <th className="border-b border-black/5 p-2 text-left text-sm font-medium dark:border-white/5">
-                <span className="flex items-center gap-1.5">
-                  <span
-                    className={`h-2.5 w-2.5 shrink-0 rounded-full ${
-                      paletteFor(memberIds, member.id).dot
-                    }`}
-                    aria-hidden
-                  />
-                  <span className="truncate">{member.displayName}</span>
-                </span>
-              </th>
-              {days.map((day) => {
-                const items = (index.get(dayKey(day)) ?? []).filter(
-                  (appointment) => appointment.memberId === member.id,
-                );
-
-                return (
-                  <td
-                    key={dayKey(day)}
-                    className={`border-b border-black/5 p-1 dark:border-white/5 ${
-                      isSameDay(day, today) ? "bg-indigo-500/5" : ""
-                    }`}
-                  >
-                    <div className="space-y-1">
-                      {items.map((appointment) => (
-                        <Chip
-                          key={`${appointment.id}-${dayKey(day)}`}
-                          appointment={appointment}
-                          day={day}
-                          memberIds={memberIds}
-                          withMember={false}
-                        />
-                      ))}
-                    </div>
-                  </td>
-                );
-              })}
+              {days.map((day) => (
+                <th
+                  key={dayKey(day)}
+                  className={`border-b border-black/10 p-2 text-center text-xs font-semibold dark:border-white/10 ${
+                    isSameDay(day, today) ? "text-indigo-600 dark:text-indigo-400" : ""
+                  }`}
+                >
+                  <span className="block uppercase tracking-wide text-neutral-500">
+                    {day.toLocaleDateString(undefined, { weekday: "short" })}
+                  </span>
+                  <span className="text-base">{day.getDate()}</span>
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.id} className="align-top">
+                <th className="border-b border-black/5 p-2 text-left text-sm font-medium dark:border-white/5">
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+                        paletteFor(memberIds, member.id).dot
+                      }`}
+                      aria-hidden
+                    />
+                    <span className="truncate">{member.displayName}</span>
+                  </span>
+                </th>
+                {days.map((day) => {
+                  const items = (index.get(dayKey(day)) ?? []).filter(
+                    (appointment) => appointment.memberId === member.id,
+                  );
+
+                  return (
+                    <td
+                      key={dayKey(day)}
+                      className={`border-b border-black/5 p-1 dark:border-white/5 ${
+                        isSameDay(day, today) ? "bg-indigo-500/5" : ""
+                      }`}
+                    >
+                      <div className="space-y-1">
+                        {items.map((appointment) => (
+                          <Chip
+                            key={`${appointment.id}-${dayKey(day)}`}
+                            appointment={appointment}
+                            day={day}
+                            memberIds={memberIds}
+                            withMember={false}
+                          />
+                        ))}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -303,59 +371,57 @@ function MonthGrid({
   const weekdayLabels = days.slice(0, 7);
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[640px]">
-        <div className="grid grid-cols-7 gap-px">
-          {weekdayLabels.map((day) => (
-            <div
-              key={`label-${dayKey(day)}`}
-              className="p-2 text-center text-xs font-semibold uppercase tracking-wide text-neutral-500"
-            >
-              {day.toLocaleDateString(undefined, { weekday: "short" })}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-px rounded-lg bg-black/10 dark:bg-white/10">
-          {days.map((day) => {
-            const items = index.get(dayKey(day)) ?? [];
-            const inMonth = day.getMonth() === monthStart.getMonth();
+    <div>
+      <div className="grid grid-cols-7 gap-px">
+        {weekdayLabels.map((day) => (
+          <div
+            key={`label-${dayKey(day)}`}
+            className="truncate p-1 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500 sm:p-2 sm:text-xs"
+          >
+            {day.toLocaleDateString(undefined, { weekday: "short" })}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-px rounded-lg bg-black/10 dark:bg-white/10">
+        {days.map((day) => {
+          const items = index.get(dayKey(day)) ?? [];
+          const inMonth = day.getMonth() === monthStart.getMonth();
 
-            return (
+          return (
+            <div
+              key={dayKey(day)}
+              className={`min-h-16 min-w-0 bg-white p-1 sm:min-h-24 sm:p-1.5 dark:bg-neutral-950 ${
+                inMonth ? "" : "opacity-45"
+              }`}
+            >
               <div
-                key={dayKey(day)}
-                className={`min-h-24 bg-white p-1.5 dark:bg-neutral-950 ${
-                  inMonth ? "" : "opacity-45"
+                className={`mb-1 text-right text-[10px] sm:text-xs ${
+                  isSameDay(day, today)
+                    ? "font-semibold text-indigo-600 dark:text-indigo-400"
+                    : "text-neutral-500"
                 }`}
               >
-                <div
-                  className={`mb-1 text-right text-xs ${
-                    isSameDay(day, today)
-                      ? "font-semibold text-indigo-600 dark:text-indigo-400"
-                      : "text-neutral-500"
-                  }`}
-                >
-                  {day.getDate()}
-                </div>
-                <div className="space-y-1">
-                  {items.slice(0, 3).map((appointment) => (
-                    <Chip
-                      key={`${appointment.id}-${dayKey(day)}`}
-                      appointment={appointment}
-                      day={day}
-                      memberIds={memberIds}
-                      withMember
-                    />
-                  ))}
-                  {items.length > 3 ? (
-                    <div className="px-1 text-[11px] text-neutral-500">
-                      +{items.length - 3} more
-                    </div>
-                  ) : null}
-                </div>
+                {day.getDate()}
               </div>
-            );
-          })}
-        </div>
+              <div className="space-y-1">
+                {items.slice(0, 3).map((appointment) => (
+                  <Chip
+                    key={`${appointment.id}-${dayKey(day)}`}
+                    appointment={appointment}
+                    day={day}
+                    memberIds={memberIds}
+                    withMember
+                  />
+                ))}
+                {items.length > 3 ? (
+                  <div className="truncate px-1 text-[10px] text-neutral-500">
+                    +{items.length - 3} more
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
