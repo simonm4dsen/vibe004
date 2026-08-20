@@ -128,7 +128,7 @@ fresh deploy and names the culprit, without exposing any secret values:
     "authSecret": { "ok": true, "detail": "set" },
     "databaseUrl": { "ok": true, "detail": "host ep-xxx.neon.tech, database neondb, driver neon-http" },
     "database":    { "ok": true, "detail": "reachable" },
-    "schema":      { "ok": true, "detail": "all 4 tables present" }
+    "schema":      { "ok": true, "detail": "all 5 tables present" }
   }
 }
 ```
@@ -154,6 +154,7 @@ users        id, email (unique, lowercased), password_hash, created_at
 groups       id, name (unique, lowercase = the join identifier), password_hash, created_by
 memberships  id, group_id, user_id, display_name   unique per (group,user) and (group,lower(display_name))
 appointments id, group_id, member_id, title, starts_at, ends_at, created_at, updated_at
+todo_items   id, group_id, member_id, title, completed_at (null = active), created_at
 ```
 
 Timestamps are stored as `timestamptz` and rendered in each visitor's own timezone.
