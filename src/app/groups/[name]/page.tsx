@@ -67,20 +67,6 @@ export default async function GroupPage({ params }: PageProps) {
       </section>
 
       <section className="card">
-        <h2 className="mb-4 text-lg font-semibold">Upcoming</h2>
-        <UpcomingList
-          groupName={context.group.name}
-          appointments={appointments}
-          memberIds={memberIds}
-        />
-      </section>
-
-      <section className="card">
-        <h2 className="mb-4 text-lg font-semibold">Calendar</h2>
-        <CalendarView appointments={appointments} members={members} />
-      </section>
-
-      <section className="card">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">To-do list</h2>
           <Link
@@ -94,6 +80,20 @@ export default async function GroupPage({ params }: PageProps) {
           <TodoForm groupName={context.group.name} />
         </div>
         <TodoList groupName={context.group.name} items={todos} />
+      </section>
+
+      <section className="card">
+        <h2 className="mb-4 text-lg font-semibold">Calendar</h2>
+        <CalendarView appointments={appointments} members={members} />
+      </section>
+
+      <section className="card">
+        <h2 className="mb-4 text-lg font-semibold">Upcoming</h2>
+        <UpcomingList
+          groupName={context.group.name}
+          appointments={appointments}
+          memberIds={memberIds}
+        />
       </section>
     </div>
   );
