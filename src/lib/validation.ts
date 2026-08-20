@@ -75,6 +75,14 @@ export const appointmentSchema = z
     path: ["endsAt"],
   });
 
+export const todoSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Title is required")
+    .max(140, "Title must be at most 140 characters"),
+});
+
 export function firstError(error: z.ZodError): string {
   return error.issues[0]?.message ?? "Invalid input";
 }

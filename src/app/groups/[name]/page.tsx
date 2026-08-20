@@ -3,9 +3,16 @@ import { notFound } from "next/navigation";
 
 import { AppointmentForm } from "@/components/appointment-form";
 import { CalendarView } from "@/components/calendar-view";
+import { TodoForm } from "@/components/todo-form";
+import { TodoList } from "@/components/todo-list";
 import { UpcomingList } from "@/components/upcoming-list";
 import { requireUser } from "@/lib/auth";
-import { getGroupAppointments, getGroupContext, getGroupMembers } from "@/lib/data";
+import {
+  getGroupAppointments,
+  getGroupContext,
+  getGroupMembers,
+  getGroupTodos,
+} from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +36,10 @@ export default async function GroupPage({ params }: PageProps) {
   const since = new Date();
   since.setDate(since.getDate() - 90);
 
-  const [members, appointments] = await Promise.all([
+  const [members, appointments, todos] = await Promise.all([
     getGroupMembers(context.group.id, context.membership.id),
     getGroupAppointments(context.group.id, context.membership.id, since),
+    getGroupTodos(context.group.id, context.membership.id),
   ]);
 
   const memberIds = members.map((member) => member.id);
@@ -70,6 +78,22 @@ export default async function GroupPage({ params }: PageProps) {
       <section className="card">
         <h2 className="mb-4 text-lg font-semibold">Calendar</h2>
         <CalendarView appointments={appointments} members={members} />
+      </section>
+
+      <section className="card">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">To-do list</h2>
+          <Link
+            href={`/groups/${context.group.name}/todos/archive`}
+            className="muted hover:underline"
+          >
+            View archived items →
+          </Link>
+        </div>
+        <div className="mb-4">
+          <TodoForm groupName={context.group.name} />
+        </div>
+        <TodoList groupName={context.group.name} items={todos} />
       </section>
     </div>
   );

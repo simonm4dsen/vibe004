@@ -92,6 +92,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const groupsRelations = relations(groups, ({ many, one }) => ({
   memberships: many(memberships),
   appointments: many(appointments),
+  todoItems: many(todoItems),
   creator: one(users, {
     fields: [groups.createdBy],
     references: [users.id],
@@ -108,6 +109,7 @@ export const membershipsRelations = relations(memberships, ({ many, one }) => ({
     references: [users.id],
   }),
   appointments: many(appointments),
+  todoItems: many(todoItems),
 }));
 
 export const appointmentsRelations = relations(appointments, ({ one }) => ({
@@ -121,7 +123,42 @@ export const appointmentsRelations = relations(appointments, ({ one }) => ({
   }),
 }));
 
+export const todoItems = pgTable(
+  "todo_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    groupId: uuid("group_id")
+      .notNull()
+      .references(() => groups.id, { onDelete: "cascade" }),
+    memberId: uuid("member_id")
+      .notNull()
+      .references(() => memberships.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    // Null while unfinished; set when the item is marked done. Doubles as the
+    // active/archived split so no separate boolean/status column is needed.
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("todo_items_group_completed_at_idx").on(table.groupId, table.completedAt),
+  ],
+);
+
+export const todoItemsRelations = relations(todoItems, ({ one }) => ({
+  group: one(groups, {
+    fields: [todoItems.groupId],
+    references: [groups.id],
+  }),
+  member: one(memberships, {
+    fields: [todoItems.memberId],
+    references: [memberships.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type Group = typeof groups.$inferSelect;
 export type Membership = typeof memberships.$inferSelect;
 export type Appointment = typeof appointments.$inferSelect;
+export type TodoItem = typeof todoItems.$inferSelect;
