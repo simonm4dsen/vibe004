@@ -1,7 +1,7 @@
-import { and, asc, count, eq, gte, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNotNull, isNull } from "drizzle-orm";
 
 import { db } from "@/db";
-import { appointments, groups, memberships } from "@/db/schema";
+import { appointments, groups, memberships, todoItems } from "@/db/schema";
 
 export type MemberDTO = {
   id: string;
@@ -138,6 +138,70 @@ export async function getGroupAppointments(
     endsAt: row.endsAt.toISOString(),
     memberId: row.memberId,
     memberName: row.memberName,
+    isOwn: row.memberId === ownMembershipId,
+  }));
+}
+
+export type TodoDTO = {
+  id: string;
+  title: string;
+  memberId: string;
+  memberName: string;
+  isOwn: boolean;
+  createdAt: string;
+  completedAt: string | null;
+};
+
+/** Unfinished to-do items for a group, oldest first. */
+export async function getGroupTodos(
+  groupId: string,
+  ownMembershipId: string,
+): Promise<TodoDTO[]> {
+  const rows = await db
+    .select({
+      id: todoItems.id,
+      title: todoItems.title,
+      memberId: todoItems.memberId,
+      memberName: memberships.displayName,
+      createdAt: todoItems.createdAt,
+      completedAt: todoItems.completedAt,
+    })
+    .from(todoItems)
+    .innerJoin(memberships, eq(memberships.id, todoItems.memberId))
+    .where(and(eq(todoItems.groupId, groupId), isNull(todoItems.completedAt)))
+    .orderBy(asc(todoItems.createdAt));
+
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    completedAt: row.completedAt ? row.completedAt.toISOString() : null,
+    isOwn: row.memberId === ownMembershipId,
+  }));
+}
+
+/** Completed (archived) to-do items for a group, most recently completed first. */
+export async function getGroupArchivedTodos(
+  groupId: string,
+  ownMembershipId: string,
+): Promise<TodoDTO[]> {
+  const rows = await db
+    .select({
+      id: todoItems.id,
+      title: todoItems.title,
+      memberId: todoItems.memberId,
+      memberName: memberships.displayName,
+      createdAt: todoItems.createdAt,
+      completedAt: todoItems.completedAt,
+    })
+    .from(todoItems)
+    .innerJoin(memberships, eq(memberships.id, todoItems.memberId))
+    .where(and(eq(todoItems.groupId, groupId), isNotNull(todoItems.completedAt)))
+    .orderBy(desc(todoItems.completedAt));
+
+  return rows.map((row) => ({
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    completedAt: row.completedAt ? row.completedAt.toISOString() : null,
     isOwn: row.memberId === ownMembershipId,
   }));
 }
