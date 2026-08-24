@@ -29,11 +29,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className={brandFont.variable}>
       <body className="min-h-screen">
-        <header className="border-b border-white/40 bg-white/60 backdrop-blur-xl dark:border-white/10 dark:bg-black/30">
+        <header className="border-b border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
             <Link
               href="/"
-              className="bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-lg font-semibold tracking-tight text-transparent"
+              className="text-lg font-semibold tracking-tight text-neutral-900 dark:text-neutral-100"
             >
               mdsn&apos;s calendar sharing app
             </Link>

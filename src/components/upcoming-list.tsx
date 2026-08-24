@@ -76,7 +76,7 @@ export function UpcomingList({
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
               {formatDate(date)}
               {relative ? (
-                <span className="ml-2 font-normal normal-case text-indigo-600 dark:text-indigo-400">
+                <span className="ml-2 font-normal normal-case text-neutral-600 dark:text-neutral-400">
                   {relative}
                 </span>
               ) : null}

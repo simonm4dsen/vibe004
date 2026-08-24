@@ -20,7 +20,7 @@ export default async function LoginPage() {
       </div>
       <p className="muted mt-4 text-center">
         No account yet?{" "}
-        <Link href="/register" className="font-medium text-indigo-600 hover:underline">
+        <Link href="/register" className="font-medium text-neutral-900 hover:underline dark:text-neutral-100">
           Create one
         </Link>
       </p>

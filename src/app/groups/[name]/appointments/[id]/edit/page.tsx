@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import { AppointmentForm } from "@/components/appointment-form";
 import { requireUser } from "@/lib/auth";
@@ -28,8 +29,12 @@ export default async function EditAppointmentPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
-      <Link href={`/groups/${context.group.name}`} className="muted hover:underline">
-        ← Back to {context.group.name}
+      <Link
+        href={`/groups/${context.group.name}`}
+        className="muted inline-flex items-center gap-1 hover:underline"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+        Back to {context.group.name}
       </Link>
       <div className="card">
         <h1 className="mb-4 text-lg font-semibold">Edit appointment</h1>

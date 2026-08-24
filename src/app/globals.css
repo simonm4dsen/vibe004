@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f2f4fb;
+  --background: #f7f7f8;
   --foreground: #14161d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0c12;
+    --background: #101114;
     --foreground: #e8eaf2;
   }
 }
@@ -23,45 +23,16 @@ body {
 }
 
 body {
-  background:
-    radial-gradient(1100px circle at 8% -12%, rgba(99, 102, 241, 0.22), transparent 55%),
-    radial-gradient(900px circle at 92% 4%, rgba(56, 189, 248, 0.18), transparent 55%),
-    radial-gradient(700px circle at 50% 110%, rgba(168, 85, 247, 0.14), transparent 60%),
-    var(--background);
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-brand), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     sans-serif;
 }
 
 @layer components {
+  /* Single radius scale used everywhere: cards/inputs/buttons all share rounded-lg. */
   .card {
-    @apply relative isolate overflow-hidden rounded-2xl border border-white/50 bg-white/55 p-5 shadow-lg shadow-indigo-950/5 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.06] dark:shadow-black/30;
-  }
-
-  .card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.55) 0%,
-      rgba(255, 255, 255, 0.12) 30%,
-      rgba(255, 255, 255, 0) 55%
-    );
-    pointer-events: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .card::before {
-      background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.14) 0%,
-        rgba(255, 255, 255, 0.04) 30%,
-        rgba(255, 255, 255, 0) 55%
-      );
-    }
+    @apply rounded-lg border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900;
   }
 
   .label {
@@ -69,7 +40,7 @@ body {
   }
 
   .input {
-    @apply block w-full min-w-0 rounded-lg border border-white/60 bg-white/70 px-3 py-2 text-sm shadow-sm outline-none backdrop-blur-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-white/10 dark:bg-white/5;
+    @apply block w-full min-w-0 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/15 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-neutral-100 dark:focus:ring-neutral-100/15;
     box-sizing: border-box;
   }
 
@@ -81,19 +52,19 @@ body {
   }
 
   .btn-primary {
-    @apply bg-indigo-600 text-white shadow-md shadow-indigo-600/25 hover:bg-indigo-500;
+    @apply bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300;
   }
 
   .btn-secondary {
-    @apply border border-white/60 bg-white/50 text-neutral-800 backdrop-blur-sm hover:bg-white/70 dark:border-white/10 dark:bg-white/5 dark:text-neutral-100 dark:hover:bg-white/10;
+    @apply border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800;
   }
 
   .btn-danger {
-    @apply border border-red-500/40 bg-red-500/5 text-red-600 backdrop-blur-sm hover:bg-red-500/10 dark:text-red-400;
+    @apply border border-red-300 bg-white text-red-700 hover:bg-red-50 dark:border-red-900 dark:bg-neutral-900 dark:text-red-400 dark:hover:bg-red-950;
   }
 
   .form-error {
-    @apply rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 backdrop-blur-sm dark:text-red-300;
+    @apply rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300;
   }
 
   .muted {

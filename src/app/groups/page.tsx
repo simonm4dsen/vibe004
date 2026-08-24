@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import { GroupForms } from "@/components/group-forms";
 import { requireUser } from "@/lib/auth";
@@ -29,7 +30,7 @@ export default async function GroupsPage() {
               <li key={group.id}>
                 <Link
                   href={`/groups/${group.name}`}
-                  className="card flex items-center justify-between transition hover:border-indigo-400"
+                  className="card flex items-center justify-between transition hover:border-neutral-400 dark:hover:border-neutral-600"
                 >
                   <span>
                     <span className="block font-medium">{group.name}</span>
@@ -38,9 +39,7 @@ export default async function GroupsPage() {
                       {group.memberCount === 1 ? "member" : "members"}
                     </span>
                   </span>
-                  <span aria-hidden className="text-neutral-400">
-                    →
-                  </span>
+                  <ChevronRight aria-hidden className="h-5 w-5 shrink-0 text-neutral-400" />
                 </Link>
               </li>
             ))}

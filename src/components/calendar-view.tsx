@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useMounted } from "@/components/use-mounted";
 import { paletteFor } from "@/lib/colors";
@@ -54,7 +55,7 @@ function Chip({
 
   return (
     <div
-      className={`truncate rounded-md border px-1.5 py-1 text-[11px] leading-tight ${palette.chip}`}
+      className={`truncate rounded-lg border px-1.5 py-1 text-[11px] leading-tight ${palette.chip}`}
       title={`${appointment.title} — ${appointment.memberName}`}
     >
       <span className="font-medium">
@@ -119,7 +120,7 @@ export function CalendarView({
             onClick={() => setOffset((value) => value - 1)}
             aria-label="Previous period"
           >
-            ←
+            <ChevronLeft className="h-4 w-4" aria-hidden />
           </button>
           <button
             type="button"
@@ -134,7 +135,7 @@ export function CalendarView({
             onClick={() => setOffset((value) => value + 1)}
             aria-label="Next period"
           >
-            →
+            <ChevronRight className="h-4 w-4" aria-hidden />
           </button>
           <span className="ml-2 font-medium">{heading}</span>
         </div>
@@ -148,9 +149,9 @@ export function CalendarView({
                 setMode(value);
                 setOffset(0);
               }}
-              className={`rounded-md px-3 py-1 text-sm font-medium capitalize transition ${
+              className={`rounded-lg px-3 py-1 text-sm font-medium capitalize transition ${
                 mode === value
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
                   : "hover:bg-black/5 dark:hover:bg-white/10"
               }`}
             >
@@ -218,14 +219,14 @@ function WeekAgenda({
             key={dayKey(day)}
             className={`rounded-lg border p-3 ${
               isSameDay(day, today)
-                ? "border-indigo-400/50 bg-indigo-500/5"
+                ? "border-neutral-400 bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-800"
                 : "border-black/10 dark:border-white/10"
             }`}
           >
             <div className="mb-2 flex items-baseline justify-between">
               <span
                 className={`text-sm font-semibold ${
-                  isSameDay(day, today) ? "text-indigo-600 dark:text-indigo-400" : ""
+                  isSameDay(day, today) ? "text-neutral-900 dark:text-neutral-100" : ""
                 }`}
               >
                 {day.toLocaleDateString(undefined, { weekday: "long" })}
@@ -290,7 +291,7 @@ function WeekGrid({
                 <th
                   key={dayKey(day)}
                   className={`border-b border-black/10 p-2 text-center text-xs font-semibold dark:border-white/10 ${
-                    isSameDay(day, today) ? "text-indigo-600 dark:text-indigo-400" : ""
+                    isSameDay(day, today) ? "text-neutral-900 dark:text-neutral-100" : ""
                   }`}
                 >
                   <span className="block uppercase tracking-wide text-neutral-500">
@@ -324,7 +325,7 @@ function WeekGrid({
                     <td
                       key={dayKey(day)}
                       className={`border-b border-black/5 p-1 dark:border-white/5 ${
-                        isSameDay(day, today) ? "bg-indigo-500/5" : ""
+                        isSameDay(day, today) ? "bg-neutral-100 dark:bg-neutral-800" : ""
                       }`}
                     >
                       <div className="space-y-1">
@@ -397,7 +398,7 @@ function MonthGrid({
               <div
                 className={`mb-1 text-right text-[10px] sm:text-xs ${
                   isSameDay(day, today)
-                    ? "font-semibold text-indigo-600 dark:text-indigo-400"
+                    ? "font-semibold text-neutral-900 dark:text-neutral-100"
                     : "text-neutral-500"
                 }`}
               >

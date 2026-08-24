@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 
 import { AppointmentForm } from "@/components/appointment-form";
 import { CalendarView } from "@/components/calendar-view";
@@ -48,8 +49,9 @@ export default async function GroupPage({ params }: PageProps) {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <Link href="/groups" className="muted hover:underline">
-            ← All groups
+          <Link href="/groups" className="muted inline-flex items-center gap-1 hover:underline">
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+            All groups
           </Link>
           <h1 className="text-2xl font-semibold tracking-tight">
             {context.group.name}
@@ -71,9 +73,10 @@ export default async function GroupPage({ params }: PageProps) {
           <h2 className="text-lg font-semibold">To-do list</h2>
           <Link
             href={`/groups/${context.group.name}/todos/archive`}
-            className="muted hover:underline"
+            className="muted inline-flex items-center gap-1 hover:underline"
           >
-            View archived items →
+            View archived items
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
         <div className="mb-4">

@@ -34,8 +34,8 @@ export function GroupForms({ defaultDisplayName }: { defaultDisplayName: string 
         <button
           type="button"
           onClick={() => setTab("join")}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
-            isJoin ? "bg-indigo-600 text-white" : "hover:bg-black/5 dark:hover:bg-white/10"
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+            isJoin ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "hover:bg-black/5 dark:hover:bg-white/10"
           }`}
         >
           Join a group
@@ -43,8 +43,8 @@ export function GroupForms({ defaultDisplayName }: { defaultDisplayName: string 
         <button
           type="button"
           onClick={() => setTab("create")}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
-            !isJoin ? "bg-indigo-600 text-white" : "hover:bg-black/5 dark:hover:bg-white/10"
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+            !isJoin ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900" : "hover:bg-black/5 dark:hover:bg-white/10"
           }`}
         >
           Create a group
