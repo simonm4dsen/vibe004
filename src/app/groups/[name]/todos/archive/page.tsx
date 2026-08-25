@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import { ArchivedTodoList } from "@/components/archived-todo-list";
 import { requireUser } from "@/lib/auth";
@@ -28,8 +29,12 @@ export default async function ArchivedTodosPage({ params }: PageProps) {
   return (
     <div className="space-y-8">
       <header>
-        <Link href={`/groups/${context.group.name}`} className="muted hover:underline">
-          ← Back to {context.group.name}
+        <Link
+          href={`/groups/${context.group.name}`}
+          className="muted inline-flex items-center gap-1 hover:underline"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+          Back to {context.group.name}
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">Archived to-do items</h1>
         <p className="muted">Completed items live here until restored.</p>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 
 import { getCurrentUser } from "@/lib/auth";
 
@@ -48,19 +49,17 @@ export default async function HomePage() {
           {features.map((feature, index) => (
             <li key={feature.title} className="relative flex flex-col gap-2">
               <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-sky-500 text-sm font-semibold text-white shadow-md shadow-indigo-600/30">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-900 text-sm font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900">
                   {index + 1}
                 </span>
                 <h2 className="font-medium">{feature.title}</h2>
               </div>
               <p className="muted">{feature.body}</p>
               {index < features.length - 1 ? (
-                <span
+                <ChevronRight
                   aria-hidden
-                  className="pointer-events-none absolute top-4 right-[-1.25rem] hidden text-neutral-300 sm:block dark:text-neutral-700"
-                >
-                  →
-                </span>
+                  className="pointer-events-none absolute top-2 right-[-1.25rem] hidden h-5 w-5 text-neutral-300 sm:block dark:text-neutral-700"
+                />
               ) : null}
             </li>
           ))}

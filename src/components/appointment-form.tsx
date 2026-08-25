@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
+import { Check } from "lucide-react";
 
 import {
   createAppointmentAction,
@@ -152,8 +153,9 @@ export function AppointmentForm({
           </Link>
         ) : null}
         {!isEdit && justSaved ? (
-          <span className="muted" role="status">
-            Added ✓
+          <span className="muted inline-flex items-center gap-1" role="status">
+            <Check className="h-4 w-4" aria-hidden />
+            Added
           </span>
         ) : null}
       </div>
