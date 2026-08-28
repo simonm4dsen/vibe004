@@ -70,7 +70,7 @@ export async function GET() {
     return Response.json({ ok: false, checks }, { status: 503 });
   }
 
-  const expected = ["users", "groups", "memberships", "appointments"];
+  const expected = ["users", "groups", "memberships", "appointments", "todo_items"];
 
   try {
     const result = await db.execute<{ table_name: string }>(
